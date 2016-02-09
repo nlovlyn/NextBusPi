@@ -1,6 +1,7 @@
 import lcddriver
 import time
-from predict import predict
+#from predict import predict
+import predict
 import threading
 
 lcd = lcddriver.lcd()
@@ -27,22 +28,18 @@ time.sleep(1) # Allow a moment for initial results
 
 while True:
 	currentTime = time.time()
-	print
-
 	print predictList[0].data[1]
 	print predictList[0].predictions[0]
 	a = predictList[0].data[1]
 	b =  predictList[0].predictions[0]
 	lcd.lcd_display_string(a, 3)
 	lcd.lcd_display_string(b, 4)
-
-	#lcd - first line
-	# 
+	#lcd - first line 
 	for pl in predictList:
 		time.sleep(.2)
 		#print pl.data[1] + ' ' + pl.data[3] + ':'
 		#print pl.data[3]
-#		lcd.lcd_display_string(pl.data[3], 4)
+		#lcd.lcd_display_string(pl.data[3], 4)
 		if pl.predictions: # List of arrival times, in seconds
 					for p in pl.predictions:
 						# Extrapolate from predicted arrival time,
