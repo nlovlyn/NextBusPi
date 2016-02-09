@@ -94,7 +94,7 @@ class lcd:
          self.lcd_write(0xD4)
 
       for char in string:
-         self.lcd_write(ord(char), Rs)
+         self.lcd_write(int(char), Rs)
 
    # clear lcd and set to home
    def lcd_clear(self):
