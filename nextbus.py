@@ -1,4 +1,5 @@
 import lcddriver
+from time import *
 import time
 from predict import predict
 import threading
@@ -13,8 +14,8 @@ stops = [
   ( 'emery', 'Hollis', '65ho_i', 'BART' ),
   ( 'emery', 'powell', '65sh_o', 'BART' ),
   ( 'actransit', 'J', '0600190', 'SF' ),
-  ( 'actransit', '802', '1018390', 'SF' ),
-#  ( 'actransit', 'F', '0601160', 'SF' ),
+#  ( 'actransit', '802', '1018390', 'SF' ),
+  ( 'actransit', 'F', '0601160', 'SF' ),
 ]
 
 # Populate a list of predict objects from stops[].  Each then handles
@@ -63,65 +64,93 @@ F0S = 0
 F1 = 0
 F1S = 0
 OutputF = 0
+
+loopcount = 0
 while True:
 	currentTime = time.time()
 	# wait for array to be filled before attempting to access
 	if len(predictList) > 0 and predictList[0].predictions:
-		print predictList[0].predictions[0]
 		HE0S = predictList[0].predictions[0]
 		HE0 = HE0S / 60
+		
+#		if pl.predictions: # List of arrival times, in seconds
+#					
+#		if len(predictList) > 0 and predictList[0].predictions[1] > 0:
+#			HE1S = predictList[0].predictions[1]
+#			HE1 = HE1S / 60
+#		else:
+#			HE1 = "ND"
 		HE1S = predictList[0].predictions[1]
 		HE1 = HE1S / 60
-		OutputHE = HollisEMY + " >EMY: " + HE0 + ", " + HE1
+		h1 = str(HollisEMY)
+		h2 = str(HE0)
+		h3 = str(HE1)
+		OutputHE = h1 + " >EMY:  " + h2.zfill(2) + ", " + h3.zfill(2)
 	else:
 		OutputHE = HollisEMY + " >EMY:No Data"
 
 	if len(predictList) > 0 and predictList[1].predictions:
-		print predictList[1].predictions[0]
 		HB0S = predictList[1].predictions[0]
 		HB0 = HB0S / 60
 		HB1S = predictList[1].predictions[1]
 		HB1 = HB1S / 60
-		OutputHB = HollisBART + " >BART: " + HB0 + ", " + HB1
+		B1 = str(HollisBART)
+		B2 = str(HB0)
+		B3 = str(HB1)
+		OutputHB = B1 + " >BART: " + B2.zfill(2) + ", " + B3.zfill(2)
 	else:
 		OutputHB = HollisBART + " >BART:No Data"
 
 	if len(predictList) > 0 and predictList[2].predictions:
-		print predictList[2].predictions[0]
 		P0S = predictList[2].predictions[0]
 		P0 = P0S / 60
 		P1S = predictList[2].predictions[1]
 		P1 = P1S / 60
-		OutputP = "[Powell] >BART: [P0], [P1]"
+		P11 = str(Powell)
+		P12 = str(P0)
+		P13 = str(P1)
+		OutputP = "Powell >BART: " + P12.zfill(2) + ", " + P13.zfill(2)
 	else:
-		OutputP = Powell + " >BART:No Data"
+		OutputP = "Powell >BART:No Data"
 
 	if len(predictList) > 0 and predictList[3].predictions:
-		print predictList[3].predictions[0]
 		J0S = predictList[3].predictions[0]
 		J0 = J0S / 60
 		J1S = predictList[3].predictions[1]
 		J1 = J1S / 60
-		OutputJ = J + " >SF: " + J0 + ", " + J1
+		J11 = str(J)
+		J12 = str(J0)
+		J13 = str(J1)
+		OutputJ = J11 + " >SF: " + J12.zfill(2) + ", " + J13.zfill(2)
 	else:
 		OutputJ = J + " >SF:No Data"
 
 	if len(predictList) > 0 and predictList[4].predictions:
-		print predictList[4].predictions[0]
 		F0S = predictList[4].predictions[0]
 		F0 = F0S / 60
-		if len(predictList) > 0 and predictList[4].predictions[1] > 0:
+		if len(predictList) > 0 and predictList[4].predictions[1]:
 			F1S = predictList[4].predictions[1]
 			F1 = F1S / 60
 		else:
-			F1S = "ND"
-		OutputF = ('%(F) >BART: %(P0), %(P1)')#F + " >SF: " + F0 + ", " + F1
+			F1 = "ND"
+		f11 = str(F)
+		f12 = str(F0)
+		f13 = str(F1)
+		OutputF = f11 + " >SF: " + f12.zfill(2) + ", " + f13.zfill(2)
 	else:
 		OutputF = F + " >SF:No Data"
-#	lcd.lcd_display_string(OutputHE, 1)
-#	lcd.lcd_display_string(OutputHB, 2)
-#	lcd.lcd_display_string(OutputP, 3)
-#	lcd.lcd_display_string(OutputJ, 4)
+	loopcount = loopcount + 1
+	if loopcount > 5:
+		loopcount = 0
+		lcd.lcd_clear()
+	if (loopcount % 2 == 0):
+		lcd.lcd_display_string(OutputHE, 2)
+		lcd.lcd_display_string(OutputF, 4)
+	else:
+		lcd.lcd_display_string(OutputHB, 2)
+		lcd.lcd_display_string(OutputJ, 4)
+		
+	lcd.lcd_display_string(OutputP, 3)
 	print OutputHE
 	print OutputHB
 	print OutputP
@@ -148,3 +177,4 @@ while True:
 					#lcd.lcd_display_string("No predictions", 4)
 					#prevTime = currentTime;
 	time.sleep(5) # Refresh every ~5 seconds
+
