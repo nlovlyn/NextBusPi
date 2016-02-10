@@ -5,6 +5,7 @@ from predict import predict
 import threading
 
 lcd = lcddriver.lcd()
+boot = 0
 
 # List of bus lines/stops to predict.  Use routefinder.py to look up
 # lines/stops for your location, copy & paste results here.  The 4th
@@ -13,7 +14,7 @@ stops = [
   ( 'emery', 'Hollis', 'ho65_o', 'EMY' ),
   ( 'emery', 'Hollis', '65ho_i', 'BART' ),
   ( 'emery', 'powell', '65sh_o', 'BART' ),
-  ( 'actransit', 'J', '0600190', 'SF' ),
+  ( 'actransit', 'J', '0601170', 'SF' ),
 #  ( 'actransit', '802', '1018390', 'SF' ),
   ( 'actransit', 'F', '0601160', 'SF' ),
 ]
@@ -24,8 +25,18 @@ stops = [
 predictList = []
 for s in stops:
 	predictList.append(predict(s))
+while boot < 10:
 
-time.sleep(1) # Allow a moment for initial results
+	boottime = str(10 - boot)
+	lcd.lcd_display_string("Loading data", 1)
+	lcd.lcd_display_string("Please wait...", 2)
+	lcd.lcd_display_string("ETA: " + boottime.zfill(2) + " sec", 3)
+	time.sleep(1) # Allow a moment for initial results
+	boot = boot + 1
+
+	
+lcd.lcd_clear()
+
 
 # Define stops
 HollisEMY = predictList[0].data[1]
@@ -75,13 +86,13 @@ while True:
 		
 #		if pl.predictions: # List of arrival times, in seconds
 #					
-#		if len(predictList) > 0 and predictList[0].predictions[1] > 0:
-#			HE1S = predictList[0].predictions[1]
-#			HE1 = HE1S / 60
-#		else:
-#			HE1 = "ND"
-		HE1S = predictList[0].predictions[1]
-		HE1 = HE1S / 60
+		if len(predictList[0].predictions) > 2:
+			HE1S = predictList[0].predictions[1]
+			HE1 = HE1S / 60
+		else:
+			HE1 = "ND"
+		#HE1S = predictList[0].predictions[1]
+		#HE1 = HE1S / 60
 		h1 = str(HollisEMY)
 		h2 = str(HE0)
 		h3 = str(HE1)
@@ -92,8 +103,14 @@ while True:
 	if len(predictList) > 0 and predictList[1].predictions:
 		HB0S = predictList[1].predictions[0]
 		HB0 = HB0S / 60
-		HB1S = predictList[1].predictions[1]
-		HB1 = HB1S / 60
+		
+		if len(predictList[1].predictions) > 2:
+			HB1S = predictList[1].predictions[1]
+			HB1 = HB1S / 60
+		
+		else:
+			HB1 = "ND"
+
 		B1 = str(HollisBART)
 		B2 = str(HB0)
 		B3 = str(HB1)
@@ -104,8 +121,14 @@ while True:
 	if len(predictList) > 0 and predictList[2].predictions:
 		P0S = predictList[2].predictions[0]
 		P0 = P0S / 60
-		P1S = predictList[2].predictions[1]
-		P1 = P1S / 60
+		if len(predictList[2].predictions) > 2:
+			P1S = predictList[2].predictions[1]
+			P1 = P1S / 60
+		
+		else:
+			P1 = "ND"
+
+
 		P11 = str(Powell)
 		P12 = str(P0)
 		P13 = str(P1)
@@ -116,8 +139,14 @@ while True:
 	if len(predictList) > 0 and predictList[3].predictions:
 		J0S = predictList[3].predictions[0]
 		J0 = J0S / 60
-		J1S = predictList[3].predictions[1]
-		J1 = J1S / 60
+		if len(predictList[3].predictions) > 2:
+			J1S = predictList[3].predictions[1]
+			J1 = J1S / 60
+		
+		else:
+			J1 = "ND"
+
+
 		J11 = str(J)
 		J12 = str(J0)
 		J13 = str(J1)
@@ -128,11 +157,13 @@ while True:
 	if len(predictList) > 0 and predictList[4].predictions:
 		F0S = predictList[4].predictions[0]
 		F0 = F0S / 60
-		if len(predictList) > 0 and predictList[4].predictions[1]:
+		if len(predictList[4].predictions) > 2:
 			F1S = predictList[4].predictions[1]
 			F1 = F1S / 60
+		
 		else:
-			F1 = "ND"
+			HF1 = "ND"
+
 		f11 = str(F)
 		f12 = str(F0)
 		f13 = str(F1)
