@@ -3,6 +3,8 @@ from time import *
 import time
 from predict import predict
 import threading
+import weather
+from weather import *
 
 lcd = lcddriver.lcd()
 boot = 0
@@ -25,7 +27,7 @@ stops = [
 predictList = []
 for s in stops:
 	predictList.append(predict(s))
-while boot < 10:
+while boot < 3:
 
 	boottime = str(10 - boot)
 	lcd.lcd_display_string("Loading data", 1)
@@ -36,6 +38,7 @@ while boot < 10:
 
 	
 lcd.lcd_clear()
+lcd.lcd_display_string(weatheroutput1, 1)
 
 
 # Define stops
@@ -75,11 +78,18 @@ F0S = 0
 F1 = 0
 F1S = 0
 OutputF = 0
-
+weatherloop = 0
 loopcount = 0
 while True:
 	currentTime = time.time()
 	# wait for array to be filled before attempting to access
+
+#	if weatherloop > 2:
+#		lcd.lcd_display_string(weatheroutput, 1)
+#		weatherloop = 0
+#		print weatheroutput
+
+	weatherloop = weatherloop +1
 	if len(predictList) > 0 and predictList[0].predictions:
 		HE0S = predictList[0].predictions[0]
 		HE0 = HE0S / 60
@@ -175,9 +185,11 @@ while True:
 		loopcount = 0
 		lcd.lcd_clear()
 	if (loopcount % 2 == 0):
+		lcd.lcd_display_string(weatheroutput1, 1)
 		lcd.lcd_display_string(OutputHE, 2)
 		lcd.lcd_display_string(OutputF, 4)
 	else:
+		lcd.lcd_display_string(weatheroutput2, 1)
 		lcd.lcd_display_string(OutputHB, 2)
 		lcd.lcd_display_string(OutputJ, 4)
 		
