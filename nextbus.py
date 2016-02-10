@@ -27,7 +27,7 @@ stops = [
 predictList = []
 for s in stops:
 	predictList.append(predict(s))
-while boot < 3:
+while boot < 10:
 
 	boottime = str(10 - boot)
 	lcd.lcd_display_string("Loading data", 1)
