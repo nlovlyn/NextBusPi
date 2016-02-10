@@ -98,7 +98,7 @@ while True:
 		h3 = str(HE1)
 		OutputHE = h1 + " >EMY:  " + h2.zfill(2) + ", " + h3.zfill(2)
 	else:
-		OutputHE = HollisEMY + " >EMY:No Data"
+		OutputHE = HollisEMY + " >EMY: No Data"
 
 	if len(predictList) > 0 and predictList[1].predictions:
 		HB0S = predictList[1].predictions[0]
